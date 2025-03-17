@@ -8,8 +8,11 @@ public class PlayerInputManager : MonoBehaviour
     public CharacterController CharacterController;
     public CinemachineCamera CinemachineCamera;
     private Vector3 _moveDirection;
-    [SerializeField]
-    private float _moveSpeed;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private PlayerGPCamera _playerGPCamera;
+
+    [SerializeField] private float _gravity;
+
 
     private void Start()
     {
@@ -37,5 +40,6 @@ public class PlayerInputManager : MonoBehaviour
 
         //Vector3 vector = new Vector3(_moveDirection.x * transform.forward.x, 0, _moveDirection.y * transform.forward.z);
         CharacterController.Move(rotatedDirection * _moveSpeed);
+        CharacterController.Move(Vector3.down * _gravity);
     }
 }
