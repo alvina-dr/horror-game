@@ -82,7 +82,7 @@ public class PlayerGPCamera : MonoBehaviour
                 Vector3 playerPhotographableVector = photographableList[i].transform.position - transform.position;
                 if (Vector3.Dot(Camera.main.transform.forward, playerPhotographableVector.normalized) > _dotProductCloseness)
                 {
-                    if (Vector3.Distance(transform.position, photographableList[i].transform.position) < _minimumDistance)
+                    if (Vector3.Distance(transform.position, photographableList[i].transform.position) < photographableList[i].MinimumDistance)
                     {
                         if (Physics.Raycast(transform.position, playerPhotographableVector, out RaycastHit hitInfo, Mathf.Infinity))
                         {

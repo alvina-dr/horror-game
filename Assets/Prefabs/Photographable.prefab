@@ -267,6 +267,8 @@ MonoBehaviour:
   _moveSound: {fileID: 7654512289332202832}
   _meshRenderer: {fileID: 4655671380736097595}
   _pictureMaterial: {fileID: 2100000, guid: 67c0cb15a9ebaee4ca85d74a9d12d030, type: 2}
+  MinimumDistance: 5
+  _blinkingDelay: 0.1
 --- !u!65 &2708043874047243763
 BoxCollider:
   m_ObjectHideFlags: 0

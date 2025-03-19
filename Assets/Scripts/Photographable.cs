@@ -10,6 +10,8 @@ public class Photographable : MonoBehaviour
     [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private Material _pictureMaterial;
     private Material _basicMaterial;
+    public float MinimumDistance;
+    [SerializeField] private float _blinkingDelay;
 
     private void Awake()
     {
@@ -22,8 +24,10 @@ public class Photographable : MonoBehaviour
 
         WasPhotographed = true;
         _meshRenderer.material = _pictureMaterial;
-        DOVirtual.DelayedCall(.1f, () => _meshRenderer.material = _basicMaterial);
+        DOVirtual.DelayedCall(_blinkingDelay, () => _meshRenderer.material = _basicMaterial);
         OnPhotographed?.Invoke();
+
+        Debug.Log("photographed");
     }
 
     public void AddMug()
