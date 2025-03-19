@@ -26,8 +26,6 @@ public class Photographable : MonoBehaviour
         _meshRenderer.material = _pictureMaterial;
         DOVirtual.DelayedCall(_blinkingDelay, () => _meshRenderer.material = _basicMaterial);
         OnPhotographed?.Invoke();
-
-        Debug.Log("photographed");
     }
 
     public void AddMug()
