@@ -8,11 +8,13 @@ public class PlayerInputManager : MonoBehaviour
     public CharacterController CharacterController;
     public CinemachineCamera CinemachineCamera;
     [SerializeField] private AudioSource _footstepAudioSource;
+    public AudioSource Jumpscare;
     private Vector3 _moveDirection;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private PlayerGPCamera _playerGPCamera;
 
     [SerializeField] private float _gravity;
+    public int MugNumber = 0;
 
 
     private void Start()
@@ -26,11 +28,12 @@ public class PlayerInputManager : MonoBehaviour
 
         if (_moveDirection != Vector3.zero && !_footstepAudioSource.isPlaying && !_playerGPCamera.IsUsingCamera)
         {
+            _footstepAudioSource.loop = true;
             _footstepAudioSource.Play();
         }
         else if (_moveDirection == Vector3.zero) 
         {
-            _footstepAudioSource.Stop();
+            _footstepAudioSource.loop = false;
         }
     }
 
@@ -67,5 +70,11 @@ public class PlayerInputManager : MonoBehaviour
         }
 
         CharacterController.Move(Vector3.down * _gravity);
+    }
+
+    public void AddMug()
+    {
+        MugNumber++;
+        GameManager.Instance.UIManager.MugNumber.text = "x" + MugNumber.ToString();
     }
 }

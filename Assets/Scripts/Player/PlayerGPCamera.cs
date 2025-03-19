@@ -8,14 +8,17 @@ public class PlayerGPCamera : MonoBehaviour
     [SerializeField] private GameObject _cameraMesh;
     [SerializeField] private Transform _handTransform;
     [SerializeField] private AudioSource _takePicture;
+    [SerializeField] private AudioSource _takePictureValidation;
+    [SerializeField] private AudioSource _takePictureValidationPitched;
     [SerializeField] private AudioSource _pickUpCamera;
     public bool IsUsingCamera;
     private List<Photographable> photographableList = new List<Photographable>();
     [SerializeField] private float _dotProductCloseness;
+    [SerializeField] private float _minimumDistance;
 
     private void Awake()
     {
-        photographableList = FindObjectsOfType<Photographable>().ToList();
+        photographableList = FindObjectsByType<Photographable>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
     }
 
     private void Update()
@@ -50,7 +53,10 @@ public class PlayerGPCamera : MonoBehaviour
     {
         _takePicture.Play();
         DetectPhotographable();
-        CloseCamera();
+        DOVirtual.DelayedCall(.1f, () =>
+        {
+            CloseCamera();
+        });
     }
 
     public void CloseCamera()
@@ -68,20 +74,38 @@ public class PlayerGPCamera : MonoBehaviour
 
     public void DetectPhotographable()
     {
+        List<Photographable> toPhotoraphList = new List<Photographable>();
         for (int i = 0; i < photographableList.Count; i++)
         {
-            Vector3 playerPhotographableVector = photographableList[i].transform.position - transform.position;
-            if (Vector3.Dot(Camera.main.transform.forward, playerPhotographableVector.normalized) > _dotProductCloseness)
+            if (photographableList[i].gameObject.activeSelf && !photographableList[i].WasPhotographed)
             {
-                if (Physics.Raycast(transform.position, playerPhotographableVector, out RaycastHit hitInfo, Mathf.Infinity))
+                Vector3 playerPhotographableVector = photographableList[i].transform.position - transform.position;
+                if (Vector3.Dot(Camera.main.transform.forward, playerPhotographableVector.normalized) > _dotProductCloseness)
                 {
-                    if (hitInfo.transform.name == photographableList[i].name)
+                    if (Vector3.Distance(transform.position, photographableList[i].transform.position) < _minimumDistance)
                     {
-                        Debug.Log("PICTURE OF " + photographableList[i].name);
-                        photographableList[i].OnPhotographed?.Invoke();
+                        if (Physics.Raycast(transform.position, playerPhotographableVector, out RaycastHit hitInfo, Mathf.Infinity))
+                        {
+                            if (hitInfo.transform.name == photographableList[i].name)
+                            {
+                                toPhotoraphList.Add(photographableList[i]);
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        if (toPhotoraphList.Count > 0)
+        {
+            _takePictureValidation.Play();
+            _takePictureValidationPitched.Play();
+        }
+
+        for (int i = 0; i < toPhotoraphList.Count; i++)
+        {
+            Debug.Log("PICTURE OF " + toPhotoraphList[i].name);
+            toPhotoraphList[i].Photograph();
         }
     }
 }
